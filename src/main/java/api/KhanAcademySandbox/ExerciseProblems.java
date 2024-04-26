@@ -12,6 +12,7 @@ public class ExerciseProblems {
 			prevSize=problems.size();
 			p=Problem.createWithSha(exerciseId, LAST_SHA, prevSize+1);
 			problems.put(LAST_SHA=p.getSha(), p);
+			System.out.println(exerciseId+": CREATED_PROBLEM "+p.getId());
 		}
 		while(problems.size()!=prevSize);
 	}

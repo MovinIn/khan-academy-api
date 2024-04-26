@@ -1,6 +1,8 @@
 package api.KhanAcademySandbox;
 
-import org.apache.http.entity.StringEntity;
+import java.util.concurrent.Future;
+
+import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 import org.json.JSONObject;
 
 public class Problem {
@@ -18,13 +20,16 @@ public class Problem {
 		Problem p=new Problem();
 		String json=p.buildJSON(exerciseId,itemId);
 		try {
-			StringEntity entity=new StringEntity(json);
-			String result=HttpSender.httpPost(URL,entity);
-			p.setValues(result);
+			Future<SimpleHttpResponse> result=HttpSender.asyncPost(URL,json.getBytes());
+			while(!result.isDone()) {
+				Thread.sleep(100);
+			}
+			p.setValues(result.get().getBody().getBodyText());
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		//System.out.println(p.toString());
 		return p;
 	}
 	
@@ -32,7 +37,7 @@ public class Problem {
 		Problem p=new Problem();
 		String json=p.buildJSONSha(ex,sha,probNum);
 		try {
-			StringEntity entity=new StringEntity(json);
+			org.apache.http.entity.StringEntity entity=new org.apache.http.entity.StringEntity(json);
 			String result=HttpSender.httpPost(URL,entity);
 			p.setValues(result);
 		}
